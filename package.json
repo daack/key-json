@@ -1,0 +1,22 @@
+{
+  "name": "key-json",
+  "version": "0.1.0",
+  "description": "",
+  "main": "keyjson.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daack/key-json.git"
+  },
+  "author": "Matteo Maselli <mat.maselli@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daack/key-json/issues"
+  },
+  "homepage": "https://github.com/daack/key-json#readme",
+  "dependencies": {
+    "fifo": "^2.3.0"
+  }
+}
