@@ -1,7 +1,7 @@
 {
   "name": "key-json",
   "version": "0.1.0",
-  "description": "",
+  "description": "Key/Json Store with multiple interfaces",
   "main": "keyjson.js",
   "scripts": {
     "test": "mocha"
@@ -10,6 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/daack/key-json.git"
   },
+  "keywords": [
+    "key-value",
+    "redis",
+    "json"
+  ],
   "author": "Matteo Maselli <mat.maselli@gmail.com>",
   "license": "MIT",
   "bugs": {
@@ -17,6 +22,11 @@
   },
   "homepage": "https://github.com/daack/key-json#readme",
   "dependencies": {
-    "fifo": "^2.3.0"
+    "pino": "^3.0.1",
+    "redis": "^2.6.3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mockery": "^2.0.0"
   }
 }

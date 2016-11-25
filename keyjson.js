@@ -1,54 +1,63 @@
 const crypto = require('crypto')
+const logger = require('./lib/logger')
 
-function KeyJson(opts = {}) {
+function KeyJson(opts) {
     if (!(this instanceof KeyJson)) {
         return new KeyJson(opts)
     }
 
-    this.keyGenerator = opts.keyGenerator || function() {
-        return crypto.randomBytes(48).toString('hex')
-    }
+    this.options = opts || {}
 
-    this.manager = opts.manager || KeyJson.managers.memory()
+    logger.setLevel(this.options.loggerLevel)
 }
 
 KeyJson.prototype.use = function(manager) {
     this.manager = manager
+
     return this
 }
 
 KeyJson.prototype.set = function(key, json, cb) {
-    if (typeof key == 'object') {
-        cb = json
-        json = key
-        key = this.keyGenerator()
-    }
-
-    this.manager.add(key, json, (err) => {
-        if (cb) cb.call(this, err, key)
+    this
+    .manager
+    .set(key, json, (err) => {
+        if (cb) cb.call(this, err)
     })
+
+    return this
 }
 
 KeyJson.prototype.get = function(key, cb) {
-    this.manager.find(key, (err, data) => {
-        cb.call(this, err, data)
+    this
+    .manager
+    .get(key, (err, json) => {
+        if (cb) cb.call(this, err, json)
     })
+
+    return this
 }
 
 KeyJson.prototype.has = function(key, cb) {
-    this.manager.exists(key, (err, check) => {
-        cb.call(this, err, check)
+    this
+    .manager
+    .has(key, (err, check) => {
+        if (cb) cb.call(this, err, check)
     })
+
+    return this
 }
 
-KeyJson.prototype.remove = function(key, cb) {
-    this.manager.delete(key, (err) => {
-        if (cb) cb.call(this, err, key)
+KeyJson.prototype.delete = function(key, cb) {
+    this
+    .manager
+    .delete(key, (err, done) => {
+        if (cb) cb.call(this, err, done)
     })
+
+    return this
 }
 
 KeyJson.managers = {
-    memory: require('./managers/memory'),
     redis: require('./managers/redis')
 }
 

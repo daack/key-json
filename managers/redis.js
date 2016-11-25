@@ -1,98 +1,76 @@
-const net = require('net')
-const fifo = require('fifo')
+const redis = require('redis')
+const logger = require('./../lib/logger')
 
 function Redis(opts) {
     if (!(this instanceof Redis)) {
         return new Redis(opts)
     }
 
-    this.queue = fifo()
-    this.client = this.connect(opts)
-    this.startUp(this.client)
+    this.client = redis.createClient(opts)
+
+    this.setListeners(this.client)
 }
 
-Redis.prototype.connect = function(opts) {
-    return net.createConnection(opts.port, opts.host || 'localhost', () => {
-        //Connesso
-    });
-}
-
-Redis.prototype.startUp = function(client) {
-    client.setEncoding('utf8')
-
-    client.on('data', (data) => {
-        let cb = null
-
-        if (cb = this.queue.shift()) {
-            cb.call(this, data)
-        }
-    })
-
-    client.on('close', (had_error) => {
-
+Redis.prototype.setListeners = function(client) {
+    client.on('ready', () => {
+        logger.info('Redis ready')
     })
 
     client.on('connect', () => {
-
+        logger.info('Redis connected')
     })
 
-    client.on('drain', () => {
+    client.on('reconnecting', (info) => {
+        logger.warn('Redis reconnecting delay: ' + info.delay + ' attempt: ' + info.attempt)
+    })
 
+    client.on('error', (err) => {
+        logger.fatal(err)
     })
 
     client.on('end', () => {
-
+        logger.info('Redis end')
     })
 
-    client.on('error', () => {
-
-    })
-
-    client.on('timeout', () => {
-
+    client.on('warning', (warn) => {
+        logger.warn(warn)
     })
 }
 
-Redis.prototype.add = function(key, json, cb) {
-    this.exec(['SET', key, JSON.stringify(json)], (data) => {
-        console.log(data)
+Redis.prototype.set = function(key, json, cb) {
+    this
+    .client
+    .set(key, JSON.stringify(json), (err, reply) => {
+        cb.call(this, err)
     })
 }
 
-Redis.prototype.find = function(key, cb) {
-    this.exec(['GET', key], (data) => {
-        console.log(data)
+Redis.prototype.get = function(key, cb) {
+    this
+    .client
+    .get(key, (err, reply) => {
+        if (!err && reply) {
+            reply = JSON.parse(reply)
+        }
+
+        cb.call(this, err, reply)
     })
 }
 
-Redis.prototype.exists = function(key, cb) {
-    this.exec(['EXISTS', key], (data) => {
-        console.log(data)
+Redis.prototype.has = function(key, cb) {
+    this
+    .client
+    .exists(key, (err, reply) => {
+        cb.call(this, err, (reply == 1))
     })
 }
 
 Redis.prototype.delete = function(key, cb) {
-    this.exec(['DEL', key], (data) => {
-        console.log(data)
+    this
+    .client
+    .del(key, (err, reply) => {
+        cb.call(this, err, (reply == 1))
     })
-}
-
-Redis.prototype.exec = function(command, cb) {
-    this.queue.push(cb)
-    this.client.write(this.makeCommand(command))
-}
-
-Redis.prototype.makeCommand = function(cmds) {
-    command = '*' + cmds.length + '\r\n'
-
-    cmds.forEach((cmd) => {
-        command += '$' + cmd.length + '\r\n' + cmd + '\r\n'
-    })
-
-    return command
-}
-
-Redis.prototype.parseResponse = function(data) {
 }
 
 module.exports = Redis
