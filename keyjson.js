@@ -7,19 +7,35 @@ function KeyJson(opts) {
     }
 
     this.options = opts || {}
+    this.currentManager = 0
+    this.managers = {}
 
     logger.setLevel(this.options.loggerLevel)
 }
 
-KeyJson.prototype.use = function(manager) {
-    this.manager = manager
+KeyJson.prototype.use = function(key, manager) {
+    if (typeof key == 'object') {
+        this.managers[0] = key
+    } else {
+        this.managers[key] = manager
+    }
+
+    return this
+}
+
+KeyJson.prototype.manager = function(key) {
+    if (!this.managers[key]) {
+        throw new Error('Manager ' + key + ' does not exists')
+    }
+
+    this.currentManager = key
 
     return this
 }
 
 KeyJson.prototype.set = function(key, json, cb) {
     this
-    .manager
+    .managers[this.currentManager]
     .set(key, json, (err) => {
         if (cb) cb.call(this, err)
     })
@@ -29,7 +45,7 @@ KeyJson.prototype.set = function(key, json, cb) {
 
 KeyJson.prototype.get = function(key, cb) {
     this
-    .manager
+    .managers[this.currentManager]
     .get(key, (err, json) => {
         if (cb) cb.call(this, err, json)
     })
@@ -39,7 +55,7 @@ KeyJson.prototype.get = function(key, cb) {
 
 KeyJson.prototype.has = function(key, cb) {
     this
-    .manager
+    .managers[this.currentManager]
     .has(key, (err, check) => {
         if (cb) cb.call(this, err, check)
     })
@@ -49,7 +65,7 @@ KeyJson.prototype.has = function(key, cb) {
 
 KeyJson.prototype.delete = function(key, cb) {
     this
-    .manager
+    .managers[this.currentManager]
     .delete(key, (err, done) => {
         if (cb) cb.call(this, err, done)
     })

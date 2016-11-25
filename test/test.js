@@ -32,6 +32,31 @@ describe('KeyJson', function() {
             chai.expect(kj).to.respondTo('delete')
         })
     })
+
+    describe('managers', function() {
+        it('should change manager', function() {
+            const kj = Kj()
+
+            kj
+            .use({test: 1})
+            .use('key1', {test: 2})
+            .use('key2', {test: 3})
+
+            chai.assert.equal(kj.currentManager, 0)
+            chai.assert.equal(kj.manager('key1').currentManager, 'key1')
+            chai.assert.equal(kj.manager('key2').currentManager, 'key2')
+        })
+
+        it('should throw an error if manager key not exists', function() {
+            const kj = Kj()
+
+            chai.expect(() => {
+                kj
+                .use('key1', {test: 2})
+                .manager('test')
+            }).to.throw(Error);
+        })
+    })
 })
 
 describe('KeyJson Redis Store', function() {
