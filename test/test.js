@@ -1,7 +1,9 @@
 const mockery = require('mockery')
 const redis = require('./mocks/redis_mock')
+const memcached = require('./mocks/memcached_mock')
 
 mockery.registerMock('redis', redis)
+mockery.registerMock('memcached', memcached)
 mockery.enable({
     warnOnReplace: false,
     warnOnUnregistered: false
@@ -105,6 +107,51 @@ describe('KeyJson Redis Store', function() {
 
         it('should delete a key', function(done) {
             const kj = redisInstance()
+
+            kj
+            .set('foo', {foo: 'bar'})
+            .delete('foo', (err, result) => {
+                chai.assert.isOk(result)
+
+                kj
+                .get('foo', (err, json) => {
+                    chai.assert.isNotOk(json)
+                    done()
+                })
+            })
+        })
+    })
+})
+
+function memcachedInstance() {
+    const kj = Kj()
+
+    return kj.use(Kj.managers.memcached())
+}
+
+describe('KeyJson Memcached Store', function() {
+    describe('crud', function() {
+        it('should set a new json object', function(done) {
+            memcachedInstance()
+            .set('foo', {foo: 'bar'})
+            .has('foo', (err, exists) => {
+                chai.assert.isOk(exists)
+                done()
+            })
+        })
+
+        it('should get a stored object', function(done) {
+            memcachedInstance()
+            .set('foo', {foo: 'bar'})
+            .get('foo', (err, json) => {
+                chai.expect(json).to.be.an('object');
+                chai.expect(json).to.include.keys('foo');
+                done()
+            })
+        })
+
+        it('should delete a key', function(done) {
+            const kj = memcachedInstance()
 
             kj
             .set('foo', {foo: 'bar'})

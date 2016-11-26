@@ -4,6 +4,7 @@ Key/Json Store with multiple interfaces
 
 * [Install](#install)
 * [Example](#example)
+* [Managers](#managers)
 * [API](#api)
 
 <a name="install"></a>
@@ -53,6 +54,14 @@ kj
 .set('bar', { bar: 'bar' }, (err) => {
 })
 ```
+
+<a name="managers"></a>
+## Managers
+
+A Manager is an abstraction layer between **key-json** and storage systems. Currently there are two available managers
+
+* Redis
+* Memcached
 
 <a name="api"></a>
 ## API

@@ -23,7 +23,8 @@
   "homepage": "https://github.com/daack/key-json#readme",
   "dependencies": {
     "pino": "^3.0.1",
-    "redis": "^2.6.3"
+    "redis": "^2.6.3",
+    "memcached": "^2.2.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",

@@ -17,10 +17,6 @@ RedisClient.prototype.exists = function(key, cb) {
     cb(null, this.db[key] ? '1' : '0')
 }
 
-RedisClient.prototype.exists = function(key, cb) {
-    cb(null, this.db[key] ? '1' : '0')
-}
-
 RedisClient.prototype.del = function(key, cb) {
     if (this.db[key]) {
         delete this.db[key]
