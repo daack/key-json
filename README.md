@@ -33,13 +33,10 @@ kj
 	host: '127.0.0.1',
 	port: 6379
 }))
-.use('redis1', Kj.managers.redis({
-    host: '127.0.0.1',
-    port: 6378
-}))
-.use('redis2', Kj.managers.redis({
-    host: '127.0.0.1',
-    port: 6377
+.use('memcached', Kj.managers.memcached('localhost:11211', {
+	retries:10,
+	retry:10000,
+	remove:true,
 }))
 .set('foo', { foo: 'foo' }, (err) => {
 })
@@ -49,8 +46,8 @@ kj
 })
 .delete('foo', (err, done) => {
 })
-.manager('redis1')
-//set bar key in the redis1 manager
+.manager('memcached')
+//set bar key in the memcached manager
 .set('bar', { bar: 'bar' }, (err) => {
 })
 ```
