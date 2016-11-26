@@ -1,6 +1,6 @@
 {
   "name": "key-json",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Key/Json Store with multiple interfaces",
   "main": "keyjson.js",
   "scripts": {
