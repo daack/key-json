@@ -4,6 +4,7 @@ Key/Json Store with multiple interfaces
 
 * [Install](#install)
 * [Example](#example)
+* [API](#api)
 
 <a name="install"></a>
 ## Install
@@ -25,10 +26,19 @@ const kj = Kj({
 })
 
 kj
+//default manager
 .use(Kj.managers.redis({
 	//redis createClient() configuration
 	host: '127.0.0.1',
 	port: 6379
+}))
+.use('redis1', Kj.managers.redis({
+    host: '127.0.0.1',
+    port: 6378
+}))
+.use('redis2', Kj.managers.redis({
+    host: '127.0.0.1',
+    port: 6377
 }))
 .set('foo', { foo: 'foo' }, (err) => {
 })
@@ -38,4 +48,78 @@ kj
 })
 .delete('foo', (err, done) => {
 })
+.manager('redis1')
+//set bar key in the redis1 manager
+.set('bar', { bar: 'bar' }, (err) => {
+})
 ```
+
+<a name="api"></a>
+## API
+
+  * <a href="#constructor"><code><b>Kj()</b></code></a>
+  * <a href="#use"><code>instance.<b>use()</b></code></a>
+  * <a href="#manager"><code>instance.<b>manager()</b></code></a>
+  * <a href="#set"><code>instance.<b>set()</b></code></a>
+  * <a href="#get"><code>instance.<b>get()</b></code></a>
+  * <a href="#has"><code>instance.<b>has()</b></code></a>
+  * <a href="#delete"><code>instance.<b>delete()</b></code></a>
+
+-------------------------------------------------------
+<a name="constructor"></a>
+### Kj([opts])
+
+Creates a new instance of KeyJson.
+
+Options are:
+
+* `loggerLevel`: ['info', 'warn', 'error', 'fatal']
+
+-------------------------------------------------------
+<a name="use"></a>
+### instance.use([key, ] manager)
+
+Set a new manager configuration
+
+* `key`, unique key for the manager
+* `manager`, compatible manager interface
+
+-------------------------------------------------------
+<a name="manager"></a>
+### instance.manager(key)
+
+Switch to another manager by its key
+
+* `key`, unique key for the manager
+
+-------------------------------------------------------
+<a name="set"></a>
+### instance.set(key, json[, cb])
+
+Store json in its key/value store
+
+* `cb` -> (error) => {}
+
+-------------------------------------------------------
+<a name="get"></a>
+### instance.get(key, cb)
+
+Get json by its key
+
+* `cb` -> (err, json) => {}, json is already parsed
+
+-------------------------------------------------------
+<a name="has"></a>
+### instance.has(key, cb)
+
+Check if key is stored
+
+* `cb` -> (err, exists) => {}, exists is a boolean
+
+-------------------------------------------------------
+<a name="delete"></a>
+### instance.delete(key[, cb])
+
+Delete key from the store
+
+* `cb` -> (err, done) => {}, done is a boolean

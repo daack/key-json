@@ -46,7 +46,11 @@ describe('KeyJson', function() {
             chai.assert.equal(kj.manager('key1').currentManager, 'key1')
             chai.assert.equal(kj.manager('key2').currentManager, 'key2')
         })
+    })
+})
 
+describe('KeyJson managers', function() {
+    describe('set and use', function() {
         it('should throw an error if manager key not exists', function() {
             const kj = Kj()
 
@@ -56,11 +60,30 @@ describe('KeyJson', function() {
                 .manager('test')
             }).to.throw(Error);
         })
+
+        it('should set in one manager and not in others', function(done) {
+            const kj = Kj()
+
+            kj
+            .use('redis1', Kj.managers.redis())
+            .use('redis2', Kj.managers.redis())
+            .manager('redis1')
+            .set('one', {foo: 'bar'})
+            .has('one', (err, exists) => {
+                chai.assert.isOk(exists)
+                kj
+                .manager('redis2')
+                .has('two', (err, exists) => {
+                    chai.assert.isNotOk(exists)
+                    done()
+                })
+            })
+        })
     })
 })
 
 describe('KeyJson Redis Store', function() {
-    describe('set', function() {
+    describe('crud', function() {
         it('should set a new json object', function(done) {
             redisInstance()
             .set('foo', {foo: 'bar'})
