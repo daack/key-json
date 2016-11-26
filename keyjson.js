@@ -74,7 +74,8 @@ KeyJson.prototype.delete = function(key, cb) {
 }
 
 KeyJson.managers = {
-    redis: require('./managers/redis')
+    redis: require('./managers/redis'),
+    memcached: require('./managers/memcached')
 }
 
 module.exports = KeyJson
