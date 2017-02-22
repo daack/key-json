@@ -4,7 +4,7 @@ function MemcachedClient(server, opts) {
     this.db = {}
 }
 
-MemcachedClient.prototype.set = function(key, data, lifetime, cb) {
+MemcachedClient.prototype.set = function(key, data, expiry, cb) {
     this.db[key] = data
     cb(null, true)
 }
@@ -24,6 +24,10 @@ MemcachedClient.prototype.del = function(key, cb) {
     }
 
     cb(null, false)
+}
+
+MemcachedClient.prototype.touch = function(key, time, cb) {
+
 }
 
 MemcachedClient.prototype.on = function(event, cb) {

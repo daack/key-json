@@ -33,10 +33,15 @@ KeyJson.prototype.manager = function(key) {
     return this
 }
 
-KeyJson.prototype.set = function(key, json, cb) {
+KeyJson.prototype.set = function(key, json, expiry, cb) {
+    if (typeof expiry == 'function') {
+        cb = expiry
+        expiry = null
+    }
+
     this
     .managers[this.currentManager]
-    .set(key, json, (err) => {
+    .set(key, json, expiry, (err) => {
         if (cb) cb.call(this, err)
     })
 

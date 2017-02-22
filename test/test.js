@@ -105,6 +105,15 @@ describe('KeyJson Redis Store', function() {
             })
         })
 
+        it('should set a new json object with expiry', function(done) {
+            redisInstance()
+            .set('foo', {foo: 'bar'}, 120)
+            .has('foo', (err, exists) => {
+                chai.assert.isOk(exists)
+                done()
+            })
+        })
+
         it('should delete a key', function(done) {
             const kj = redisInstance()
 
@@ -134,6 +143,15 @@ describe('KeyJson Memcached Store', function() {
         it('should set a new json object', function(done) {
             memcachedInstance()
             .set('foo', {foo: 'bar'})
+            .has('foo', (err, exists) => {
+                chai.assert.isOk(exists)
+                done()
+            })
+        })
+
+        it('should set a new json object with expiry', function(done) {
+            memcachedInstance()
+            .set('foo', {foo: 'bar'}, 120)
             .has('foo', (err, exists) => {
                 chai.assert.isOk(exists)
                 done()

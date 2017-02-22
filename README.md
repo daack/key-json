@@ -100,10 +100,11 @@ Switch to another manager by its key
 
 -------------------------------------------------------
 <a name="set"></a>
-### instance.set(key, json[, cb])
+### instance.set(key, json[, expiry, cb])
 
 Store json in its key/value store
 
+* `expiry` -> TTL for this key in seconds
 * `cb` -> (error) => {}
 
 -------------------------------------------------------

@@ -12,31 +12,31 @@ function Memcached(server, opts) {
 }
 
 Memcached.prototype.setListeners = function(client) {
-    client.on('issue', (details) => { 
-        logger.warn(details) 
+    client.on('issue', (details) => {
+        logger.warn(details)
     });
 
-    client.on('failure', (details) => { 
-        logger.fatal(details) 
+    client.on('failure', (details) => {
+        logger.fatal(details)
     });
 
-    client.on('reconnecting', (details) => { 
-        logger.warn(details) 
+    client.on('reconnecting', (details) => {
+        logger.warn(details)
     });
 
-    client.on('reconnect', (details) => { 
-        logger.info(details) 
+    client.on('reconnect', (details) => {
+        logger.info(details)
     });
 
-    client.on('remove', (details) => { 
-        logger.info(details) 
+    client.on('remove', (details) => {
+        logger.info(details)
     });
 }
 
-Memcached.prototype.set = function(key, json, cb) {
+Memcached.prototype.set = function(key, json, expiry, cb) {
     this
     .client
-    .set(key, JSON.stringify(json), 0, (err, reply) => {
+    .set(key, JSON.stringify(json), expiry || 0, (err, reply) => {
         cb.call(this, err)
     })
 }
@@ -65,6 +65,14 @@ Memcached.prototype.delete = function(key, cb) {
     .client
     .del(key, (err, reply) => {
         cb.call(this, err, (reply == 1))
+    })
+}
+
+Memcached.prototype.ttl = function(key, time, cb) {
+    this
+    .client
+    .touch(key, time, (err) => {
+        cb.call(this, err)
     })
 }
 

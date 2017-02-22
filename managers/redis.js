@@ -37,11 +37,18 @@ Redis.prototype.setListeners = function(client) {
     })
 }
 
-Redis.prototype.set = function(key, json, cb) {
+Redis.prototype.set = function(key, json, expiry, cb) {
     this
     .client
     .set(key, JSON.stringify(json), (err, reply) => {
-        cb.call(this, err)
+        if (expiry && !err) {
+            this
+            .ttl(key, expiry, (err) => {
+                cb.call(this, err)
+            })
+        } else {
+            cb.call(this, err)
+        }
     })
 }
 
@@ -70,6 +77,14 @@ Redis.prototype.delete = function(key, cb) {
     .client
     .del(key, (err, reply) => {
         cb.call(this, err, (reply == 1))
+    })
+}
+
+Redis.prototype.ttl = function(key, time, cb) {
+    this
+    .client
+    .expire(key, time, (err) => {
+        cb.call(this, err)
     })
 }
 

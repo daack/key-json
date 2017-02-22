@@ -26,6 +26,10 @@ RedisClient.prototype.del = function(key, cb) {
     cb(null, '0')
 }
 
+RedisClient.prototype.expire = function(key, time, cb) {
+
+}
+
 RedisClient.prototype.on = function(event, cb) {
 
 }
